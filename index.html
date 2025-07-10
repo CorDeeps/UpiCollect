@@ -62,8 +62,8 @@
     <input type="number" id="amount" placeholder="Enter amount ₹" />
     <select id="upiSelect">
       <option value="">-- Select UPI ID --</option>
-      <option value="8209019669@ybl">Karan Bhya</option>
-      <option value="6367593465@ybl">Deepu</option>
+      <option value="8209019669@ybl">KARNVEER SINGH SONIGARA</option>
+      <option value="6367593465@ybl">Priyanshu Raj</option>
     </select>
     <button onclick="generateLink()">Generate UPI Link</button>
 
@@ -74,13 +74,20 @@
     function generateLink() {
       const amount = document.getElementById('amount').value.trim();
       const upi = document.getElementById('upiSelect').value;
-      const name = "Karan Bhya Collect";
-      const note = "UPI Payment";
       const txn = "TXN" + Date.now();
+      const note = "UPI Payment";
 
       if (!amount || !upi) {
         alert("Please enter amount and select UPI ID.");
         return;
+      }
+
+      // Real names
+      let name = "";
+      if (upi === "8209019669@ybl") {
+        name = "KARNVEER SINGH SONIGARA";
+      } else if (upi === "6367593465@ybl") {
+        name = "Priyanshu Raj";
       }
 
       const link = `upi://pay?pa=${upi}&pn=${encodeURIComponent(name)}&am=${amount}&tn=${encodeURIComponent(note)}&tr=${txn}&cu=INR`;
