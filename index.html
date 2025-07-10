@@ -16,12 +16,10 @@
       padding: 20px;
       animation: fadeIn 1s ease;
     }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
     .container {
       background: #ffffff;
       padding: 30px;
@@ -31,7 +29,6 @@
       width: 95%;
       text-align: center;
     }
-
     .logo {
       width: 80px;
       height: 80px;
@@ -39,17 +36,14 @@
       margin-bottom: 10px;
       animation: bounce 2s infinite;
     }
-
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-8px); }
     }
-
     h2 {
       margin: 10px 0;
       color: #1e40af;
     }
-
     input, select, button {
       width: 100%;
       padding: 12px;
@@ -58,7 +52,6 @@
       border-radius: 8px;
       border: 1px solid #ccc;
     }
-
     button {
       background-color: #2563eb;
       color: white;
@@ -66,11 +59,9 @@
       cursor: pointer;
       transition: 0.3s ease;
     }
-
     button:hover {
       background-color: #1e40af;
     }
-
     .app-btn {
       margin-top: 10px;
       padding: 12px;
@@ -81,15 +72,11 @@
       cursor: pointer;
       width: 100%;
     }
-
     .phonepe { background: #5f259f; }
     .gpay    { background: #4285f4; }
     .paytm   { background: #00baf2; }
     .bhim    { background: #ff6600; }
-    .upi     { background: #6b7280; }
-
     .hidden { display: none; }
-
     .countdown {
       margin-top: 15px;
       font-size: 16px;
@@ -118,11 +105,10 @@
       <p>To UPI: <span id="displayUpi">--</span></p>
       <p class="countdown">Expires in: <span id="min">05</span>:<span id="sec">00</span></p>
 
-      <button class="app-btn phonepe" onclick="pay()">PhonePe</button>
-      <button class="app-btn gpay" onclick="pay()">Google Pay</button>
-      <button class="app-btn paytm" onclick="pay()">Paytm</button>
-      <button class="app-btn bhim" onclick="pay()">BHIM</button>
-      <button class="app-btn upi" onclick="pay()">Any UPI App</button>
+      <button class="app-btn phonepe" onclick="pay('phonepe')">Pay with PhonePe</button>
+      <button class="app-btn gpay" onclick="pay('googlepay')">Pay with Google Pay</button>
+      <button class="app-btn paytm" onclick="pay('paytm')">Pay with Paytm</button>
+      <button class="app-btn bhim" onclick="pay('bhim')">Pay with BHIM</button>
     </div>
   </div>
 
@@ -143,7 +129,6 @@
       document.getElementById("displayAmount").innerText = amount;
       document.getElementById("displayUpi").innerText = upiId;
 
-      // Start countdown
       let total = 300;
       timer = setInterval(() => {
         if (total <= 0) {
@@ -157,14 +142,27 @@
       }, 1000);
     }
 
-    function pay() {
+    function pay(app) {
       const txnId = "TXN" + Date.now();
       const appName = "Karan Bhya Collect";
       const note = "Payment via UPI";
 
-      const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(appName)}&am=${amount}&tn=${encodeURIComponent(note)}&tr=${txnId}&cu=INR`;
+      const appPackages = {
+        phonepe: "com.phonepe.app",
+        googlepay: "com.google.android.apps.nbu.paisa.user",
+        paytm: "net.one97.paytm",
+        bhim: "in.org.npci.upiapp"
+      };
 
-      window.location.href = upiLink;
+      const packageName = appPackages[app];
+      if (!packageName) {
+        alert("Invalid app selected");
+        return;
+      }
+
+      const intentLink = `intent://pay?pa=${upiId}&pn=${encodeURIComponent(appName)}&am=${amount}&tn=${encodeURIComponent(note)}&tr=${txnId}&cu=INR#Intent;scheme=upi;package=${packageName};end`;
+
+      window.location.href = intentLink;
     }
   </script>
 </body>
