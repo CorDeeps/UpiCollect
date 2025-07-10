@@ -1,168 +1,93 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8" />
-  <title>UPI Payment – Karan Bhya</title>
+  <title>UPI Payment</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
     body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #e0f7fa, #e3f2fd);
-      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #f0f4ff;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
-      animation: fadeIn 1s ease;
+      min-height: 100vh;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .container {
-      background: #ffffff;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      max-width: 420px;
-      width: 95%;
+    .box {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
       text-align: center;
     }
-    .logo {
-      width: 80px;
-      height: 80px;
-      object-fit: contain;
-      margin-bottom: 10px;
-      animation: bounce 2s infinite;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
     h2 {
-      margin: 10px 0;
+      margin-bottom: 15px;
       color: #1e40af;
     }
     input, select, button {
       width: 100%;
       padding: 12px;
-      margin-top: 12px;
+      margin: 10px 0;
       font-size: 16px;
-      border-radius: 8px;
+      border-radius: 6px;
       border: 1px solid #ccc;
     }
     button {
-      background-color: #2563eb;
+      background: #2563eb;
       color: white;
       border: none;
       cursor: pointer;
-      transition: 0.3s ease;
     }
-    button:hover {
-      background-color: #1e40af;
-    }
-    .app-btn {
+    .upi-btn {
       margin-top: 10px;
-      padding: 12px;
-      font-size: 16px;
+      display: block;
+      background: #5f259f;
       color: white;
-      border: none;
+      text-decoration: none;
+      padding: 12px;
       border-radius: 6px;
-      cursor: pointer;
-      width: 100%;
+      font-weight: bold;
     }
-    .phonepe { background: #5f259f; }
-    .gpay    { background: #4285f4; }
-    .paytm   { background: #00baf2; }
-    .bhim    { background: #ff6600; }
-    .hidden { display: none; }
-    .countdown {
-      margin-top: 15px;
-      font-size: 16px;
-      color: #475569;
+    .hide {
+      display: none;
     }
   </style>
 </head>
 <body>
+  <div class="box">
+    <h2>Send UPI Payment</h2>
+    <input type="number" id="amount" placeholder="Enter amount ₹" />
+    <select id="upiSelect">
+      <option value="">-- Select UPI ID --</option>
+      <option value="8209019669@ybl">Karan Bhya</option>
+      <option value="6367593465@ybl">Deepu</option>
+    </select>
+    <button onclick="generateLink()">Generate UPI Link</button>
 
-  <div class="container">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/UPI-Logo-vector.svg/2048px-UPI-Logo-vector.svg.png" class="logo" alt="UPI Logo" />
-    
-    <div id="formSection">
-      <h2>Pay to Karan Bhya / Deepu</h2>
-      <input inputmode="decimal" pattern="[0-9]*" id="amount" placeholder="Enter Amount (₹)" />
-      <select id="upiId">
-        <option value="">-- Select UPI ID --</option>
-        <option value="8209019669@ybl">Karan Bhya</option>
-        <option value="6367593465@ybl">Deepu</option>
-      </select>
-      <button onclick="startPayment()">Proceed to Payment</button>
-    </div>
-
-    <div id="paymentSection" class="hidden">
-      <h2>Pay ₹<span id="displayAmount">0</span></h2>
-      <p>To UPI: <span id="displayUpi">--</span></p>
-      <p class="countdown">Expires in: <span id="min">05</span>:<span id="sec">00</span></p>
-
-      <button class="app-btn phonepe" onclick="pay('phonepe')">Pay with PhonePe</button>
-      <button class="app-btn gpay" onclick="pay('googlepay')">Pay with Google Pay</button>
-      <button class="app-btn paytm" onclick="pay('paytm')">Pay with Paytm</button>
-      <button class="app-btn bhim" onclick="pay('bhim')">Pay with BHIM</button>
-    </div>
+    <a href="#" id="upiLink" class="upi-btn hide" target="_blank">Pay Now via UPI App</a>
   </div>
 
   <script>
-    let upiId = "", amount = "", timer;
+    function generateLink() {
+      const amount = document.getElementById('amount').value.trim();
+      const upi = document.getElementById('upiSelect').value;
+      const name = "Karan Bhya Collect";
+      const note = "UPI Payment";
+      const txn = "TXN" + Date.now();
 
-    function startPayment() {
-      amount = document.getElementById("amount").value.trim();
-      upiId = document.getElementById("upiId").value.trim();
-
-      if (!amount || !upiId || isNaN(amount) || Number(amount) <= 0) {
-        alert("Please enter valid amount and select UPI ID.");
+      if (!amount || !upi) {
+        alert("Please enter amount and select UPI ID.");
         return;
       }
 
-      document.getElementById("formSection").classList.add("hidden");
-      document.getElementById("paymentSection").classList.remove("hidden");
-      document.getElementById("displayAmount").innerText = amount;
-      document.getElementById("displayUpi").innerText = upiId;
+      const link = `upi://pay?pa=${upi}&pn=${encodeURIComponent(name)}&am=${amount}&tn=${encodeURIComponent(note)}&tr=${txn}&cu=INR`;
 
-      let total = 300;
-      timer = setInterval(() => {
-        if (total <= 0) {
-          clearInterval(timer);
-          alert("Payment session expired!");
-          return;
-        }
-        total--;
-        document.getElementById("min").innerText = String(Math.floor(total / 60)).padStart(2, '0');
-        document.getElementById("sec").innerText = String(total % 60).padStart(2, '0');
-      }, 1000);
-    }
-
-    function pay(app) {
-      const txnId = "TXN" + Date.now();
-      const appName = "Karan Bhya Collect";
-      const note = "Payment via UPI";
-
-      const appPackages = {
-        phonepe: "com.phonepe.app",
-        googlepay: "com.google.android.apps.nbu.paisa.user",
-        paytm: "net.one97.paytm",
-        bhim: "in.org.npci.upiapp"
-      };
-
-      const packageName = appPackages[app];
-      if (!packageName) {
-        alert("Invalid app selected");
-        return;
-      }
-
-      const intentLink = `intent://pay?pa=${upiId}&pn=${encodeURIComponent(appName)}&am=${amount}&tn=${encodeURIComponent(note)}&tr=${txnId}&cu=INR#Intent;scheme=upi;package=${packageName};end`;
-
-      window.location.href = intentLink;
+      const upiBtn = document.getElementById("upiLink");
+      upiBtn.href = link;
+      upiBtn.classList.remove("hide");
     }
   </script>
 </body>
