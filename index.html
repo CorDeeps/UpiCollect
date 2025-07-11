@@ -1,100 +1,149 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>UPI Payment</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DeepLink By Deepu</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f0f4ff;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f2027;  /* fallback for old browsers */
+      background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      padding: 20px;
+      justify-content: center;
       min-height: 100vh;
+      overflow-x: hidden;
+      color: #fff;
     }
-    .box {
-      background: white;
+
+    .bubble {
+      position: fixed;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      animation: float 20s infinite linear;
+      pointer-events: none;
+    }
+
+    .bubble:nth-child(1) { width: 80px; height: 80px; left: 10%; top: 20%; animation-duration: 25s; }
+    .bubble:nth-child(2) { width: 60px; height: 60px; left: 70%; top: 30%; animation-duration: 18s; }
+    .bubble:nth-child(3) { width: 100px; height: 100px; left: 50%; top: 60%; animation-duration: 30s; }
+    .bubble:nth-child(4) { width: 40px; height: 40px; left: 80%; top: 80%; animation-duration: 20s; }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-1000px) rotate(360deg); }
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
       padding: 25px;
       border-radius: 12px;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 400px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      z-index: 2;
+    }
+
+    .qr-img {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      border: 4px solid #fff;
+    }
+
+    .input-box {
+      margin: 15px 0;
+    }
+
+    input[type="number"] {
+      padding: 10px;
+      font-size: 18px;
+      width: 80%;
+      border-radius: 8px;
+      border: none;
       text-align: center;
     }
-    h2 {
-      margin-bottom: 15px;
-      color: #1e40af;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
+
+    .btn {
+      display: inline-block;
+      margin: 10px 10px 0 10px;
+      padding: 12px 25px;
       font-size: 16px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background: #2563eb;
       color: white;
+      background-color: #2196F3;
       border: none;
+      border-radius: 8px;
       cursor: pointer;
-    }
-    .upi-btn {
-      margin-top: 10px;
-      display: block;
-      background: #5f259f;
-      color: white;
       text-decoration: none;
-      padding: 12px;
-      border-radius: 6px;
-      font-weight: bold;
+      transition: background 0.3s;
     }
-    .hide {
-      display: none;
+
+    .btn:hover {
+      background-color: #0b7dda;
+    }
+
+    .gpay { background: #5F6368; }
+    .phonepe { background: #6f42c1; }
+    .paytm { background: #002970; }
+
+    h2 {
+      margin: 0 0 15px 0;
+      font-size: 26px;
+    }
+
+    .footer {
+      margin-top: 25px;
+      font-size: 14px;
+      color: #ccc;
     }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h2>Send UPI Payment</h2>
-    <input type="number" id="amount" placeholder="Enter amount ₹" />
-    <select id="upiSelect">
-      <option value="">-- Select UPI ID --</option>
-      <option value="8209019669@ybl">KARNVEER SINGH SONIGARA</option>
-      <option value="6367593465@ybl">Priyanshu Raj</option>
-    </select>
-    <button onclick="generateLink()">Generate UPI Link</button>
 
-    <a href="#" id="upiLink" class="upi-btn hide" target="_blank">Pay Now via UPI App</a>
+  <!-- Animated Floating Background Circles -->
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+
+  <div class="container">
+    <h2>Pay to DINESH KUMAR SHARMA</h2>
+
+    <!-- QR Code Image -->
+    <img src="https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=upi://pay?pa=paytmqr69rjv7@ptys&pn=DINESH%20KUMAR%20SHARMA&cu=INR" alt="QR Code" class="qr-img">
+
+    <!-- Amount Input -->
+    <div class="input-box">
+      <input type="number" id="amount" placeholder="Enter Amount ₹" min="1">
+    </div>
+
+    <!-- Payment Buttons -->
+    <div class="buttons">
+      <a class="btn gpay" onclick="pay('gpay')">Pay with GPay</a>
+      <a class="btn phonepe" onclick="pay('phonepe')">Pay with PhonePe</a>
+      <a class="btn paytm" onclick="pay('paytm')">Pay with Paytm</a>
+    </div>
+
+    <div class="footer">DeepLink By Deepu</div>
   </div>
 
   <script>
-    function generateLink() {
-      const amount = document.getElementById('amount').value.trim();
-      const upi = document.getElementById('upiSelect').value;
-      const txn = "TXN" + Date.now();
-      const note = "UPI Payment";
-
-      if (!amount || !upi) {
-        alert("Please enter amount and select UPI ID.");
+    function pay(app) {
+      const amount = document.getElementById('amount').value;
+      if (!amount || amount <= 0) {
+        alert("Please enter a valid amount.");
         return;
       }
 
-      // Real names
-      let name = "";
-      if (upi === "8209019669@ybl") {
-        name = "KARNVEER SINGH SONIGARA";
-      } else if (upi === "6367593465@ybl") {
-        name = "Priyanshu Raj";
-      }
+      const upiID = "paytmqr69rjv7@ptys";
+      const name = "DINESH KUMAR SHARMA";
+      const url = `upi://pay?pa=${upiID}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR`;
 
-      const link = `upi://pay?pa=${upi}&pn=${encodeURIComponent(name)}&am=${amount}&tn=${encodeURIComponent(note)}&tr=${txn}&cu=INR`;
-
-      const upiBtn = document.getElementById("upiLink");
-      upiBtn.href = link;
-      upiBtn.classList.remove("hide");
+      window.location.href = url;
     }
   </script>
 </body>
