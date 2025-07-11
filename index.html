@@ -1,164 +1,82 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DeepLink By Deepu</title>
+  <title>UPI via WhatsApp – DeepLink by Deepu</title>
   <style>
     body {
       margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-      color: #fff;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       min-height: 100vh;
-      flex-direction: column;
-      overflow: hidden;
-      text-align: center;
+      color: #fff;
     }
-
     .container {
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.1);
       padding: 30px;
       border-radius: 12px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 0 25px rgba(0,0,0,0.3);
-      max-width: 400px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      text-align: center;
       width: 90%;
-      z-index: 2;
+      max-width: 400px;
     }
-
     input[type="number"] {
       padding: 12px;
+      width: 80%;
       font-size: 18px;
-      width: 200px;
       border-radius: 8px;
       border: none;
       text-align: center;
       margin-bottom: 20px;
     }
-
-    button, .btn {
-      padding: 12px 25px;
+    button {
+      background: #25D366;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
       font-size: 16px;
       color: white;
-      border: none;
-      border-radius: 8px;
       cursor: pointer;
-      text-decoration: none;
-      transition: background 0.3s, transform 0.2s;
-      margin: 8px auto;
-      display: block;
-      width: 80%;
+      transition: background 0.3s ease;
     }
-
-    button {
-      background: linear-gradient(to right, #00c6ff, #0072ff);
-    }
-
     button:hover {
-      transform: scale(1.05);
+      background: #1ebc5c;
     }
-
-    .gpay { background-color: #5F6368; }
-    .phonepe { background-color: #8b2bb9; }
-    .paytm { background-color: #002970; }
-
-    .hidden {
-      display: none;
-    }
-
-    .qr-img {
-      width: 250px;
-      height: 250px;
-      border: 4px solid #fff;
-      border-radius: 10px;
-      margin: 20px 0;
-    }
-
     .footer {
-      margin-top: 15px;
+      margin-top: 20px;
       font-size: 14px;
-      color: #aaa;
-    }
-
-    .bubble {
-      position: fixed;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      animation: float 20s infinite linear;
-      pointer-events: none;
-    }
-
-    .bubble:nth-child(1) { width: 80px; height: 80px; left: 10%; top: 20%; animation-duration: 25s; }
-    .bubble:nth-child(2) { width: 60px; height: 60px; left: 70%; top: 30%; animation-duration: 18s; }
-    .bubble:nth-child(3) { width: 100px; height: 100px; left: 50%; top: 60%; animation-duration: 30s; }
-    .bubble:nth-child(4) { width: 40px; height: 40px; left: 80%; top: 80%; animation-duration: 20s; }
-
-    @keyframes float {
-      0% { transform: translateY(0) rotate(0deg); }
-      100% { transform: translateY(-1000px) rotate(360deg); }
+      color: #ccc;
     }
   </style>
 </head>
 <body>
-
-  <!-- Floating Bubbles -->
-  <div class="bubble"></div>
-  <div class="bubble"></div>
-  <div class="bubble"></div>
-  <div class="bubble"></div>
-
-  <div class="container" id="step1">
-    <h2>Enter Amount to Pay</h2>
-    <input type="number" id="amt" placeholder="Amount in ₹" min="1" />
-    <button onclick="proceed()">Proceed to Pay</button>
-  </div>
-
-  <div class="container hidden" id="step2">
-    <h2>Pay to 7728012178@YBL</h2>
-    <img id="qr" class="qr-img" src="" alt="QR Code" />
-
-    <!-- App Deep Links -->
-    <a class="btn gpay" id="gpayBtn">Pay with GPay</a>
-    <a class="btn phonepe" id="phonepeBtn">Pay with PhonePe</a>
-    <a class="btn paytm" id="paytmBtn">Pay with Paytm</a>
-
+  <div class="container">
+    <h2>Send UPI Link via WhatsApp</h2>
+    <input type="number" id="amt" placeholder="Enter amount (₹)" />
+    <button onclick="sendToWhatsApp()">Send on WhatsApp</button>
     <div class="footer">DeepLink By Deepu</div>
   </div>
 
   <script>
-    const upiID = "7728012178@ybl";
+    const upi = "7728012178@ybl"; // Teri UPI ID yahan set hai
 
-    function generateOrderID() {
-      const now = new Date();
-      const id = `ORD${now.getFullYear()}${now.getMonth()+1}${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}`;
-      return id;
-    }
-
-    function proceed() {
+    function sendToWhatsApp() {
       const amt = document.getElementById("amt").value;
       if (!amt || amt <= 0) {
         alert("Please enter a valid amount.");
         return;
       }
 
-      const orderId = generateOrderID();
-      const message = encodeURIComponent(`Payment for ${orderId}`);
-
-      // QR Code
-      const qrLink = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=${upiID}&am=${amt}&cu=INR&tn=${message}`;
-      document.getElementById("qr").src = qrLink;
-
-      // Deep links
-      document.getElementById("gpayBtn").href = `tez://upi/pay?pa=${upiID}&am=${amt}&cu=INR&tn=${message}`;
-      document.getElementById("phonepeBtn").href = `phonepe://upi/pay?pa=${upiID}&am=${amt}&cu=INR&tn=${message}`;
-      document.getElementById("paytmBtn").href = `paytmmp://pay?pa=${upiID}&am=${amt}&cu=INR&tn=${message}`;
-
-      document.getElementById("step1").classList.add("hidden");
-      document.getElementById("step2").classList.remove("hidden");
+      const upiLink = `upi://pay?pa=${upi}&am=${amt}&cu=INR&tn=Thanks`;
+      const encoded = encodeURIComponent(upiLink);
+      const waLink = `https://wa.me/?text=${encoded}`;
+      window.open(waLink, "_blank");
     }
   </script>
 </body>
