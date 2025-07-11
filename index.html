@@ -118,7 +118,7 @@
   </div>
 
   <div class="container hidden" id="step2">
-    <h2>Pay to INDER2008@FAM</h2>
+    <h2>Pay to 7728012178@YBL</h2>
     <img id="qr" class="qr-img" src="" alt="QR Code" />
 
     <!-- App Deep Links -->
@@ -130,7 +130,13 @@
   </div>
 
   <script>
-    const upiID = "inder2008@fam";
+    const upiID = "7728012178@ybl";
+
+    function generateOrderID() {
+      const now = new Date();
+      const id = `ORD${now.getFullYear()}${now.getMonth()+1}${now.getDate()}${now.getHours()}${now.getMinutes()}${now.getSeconds()}`;
+      return id;
+    }
 
     function proceed() {
       const amt = document.getElementById("amt").value;
@@ -139,14 +145,17 @@
         return;
       }
 
+      const orderId = generateOrderID();
+      const message = encodeURIComponent(`Payment for ${orderId}`);
+
       // QR Code
-      const qrLink = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=${upiID}&am=${amt}&cu=INR`;
+      const qrLink = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=${upiID}&am=${amt}&cu=INR&tn=${message}`;
       document.getElementById("qr").src = qrLink;
 
-      // App-specific Deep Links
-      document.getElementById("gpayBtn").href = `tez://upi/pay?pa=${upiID}&am=${amt}&cu=INR`;
-      document.getElementById("phonepeBtn").href = `phonepe://upi/pay?pa=${upiID}&am=${amt}&cu=INR`;
-      document.getElementById("paytmBtn").href = `paytmmp://pay?pa=${upiID}&am=${amt}&cu=INR`;
+      // Deep links
+      document.getElementById("gpayBtn").href = `tez://upi/pay?pa=${upiID}&am=${amt}&cu=INR&tn=${message}`;
+      document.getElementById("phonepeBtn").href = `phonepe://upi/pay?pa=${upiID}&am=${amt}&cu=INR&tn=${message}`;
+      document.getElementById("paytmBtn").href = `paytmmp://pay?pa=${upiID}&am=${amt}&cu=INR&tn=${message}`;
 
       document.getElementById("step1").classList.add("hidden");
       document.getElementById("step2").classList.remove("hidden");
