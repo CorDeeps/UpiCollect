@@ -84,7 +84,6 @@
       color: #aaa;
     }
 
-    /* Bubble animation */
     .bubble {
       position: fixed;
       border-radius: 50%;
@@ -121,7 +120,8 @@
   <div class="container hidden" id="step2">
     <h2>Pay to DINESH KUMAR SHARMA</h2>
     <img id="qr" class="qr-img" src="" alt="QR Code" />
-    
+
+    <!-- App Deep Links -->
     <a class="btn gpay" id="gpayBtn">Pay with GPay</a>
     <a class="btn phonepe" id="phonepeBtn">Pay with PhonePe</a>
     <a class="btn paytm" id="paytmBtn">Pay with Paytm</a>
@@ -139,13 +139,14 @@
         return;
       }
 
+      // QR Code
       const qrLink = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=${upiID}&am=${amt}&cu=INR`;
       document.getElementById("qr").src = qrLink;
 
-      const link = `upi://pay?pa=${upiID}&am=${amt}&cu=INR`;
-      document.getElementById("gpayBtn").href = link;
-      document.getElementById("phonepeBtn").href = link;
-      document.getElementById("paytmBtn").href = link;
+      // App-specific Deep Links
+      document.getElementById("gpayBtn").href = `tez://upi/pay?pa=${upiID}&am=${amt}&cu=INR`;
+      document.getElementById("phonepeBtn").href = `phonepe://upi/pay?pa=${upiID}&am=${amt}&cu=INR`;
+      document.getElementById("paytmBtn").href = `paytmmp://pay?pa=${upiID}&am=${amt}&cu=INR`;
 
       document.getElementById("step1").classList.add("hidden");
       document.getElementById("step2").classList.remove("hidden");
