@@ -1,83 +1,96 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>UPI via WhatsApp – DeepLink by Deepu</title>
+  <title>UPI Payment - NITAL STORE</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
-      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Poppins', sans-serif;
       display: flex;
-      justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      color: #fff;
-    }
-    .container {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-      text-align: center;
-      width: 90%;
-      max-width: 400px;
-    }
-    input[type="number"] {
-      padding: 12px;
-      width: 80%;
-      font-size: 18px;
-      border-radius: 8px;
-      border: none;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    button {
-      background: #25D366;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: 16px;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(-45deg, #ff4e50, #fc913a, #f9d423, #eae374);
+      background-size: 400% 400%;
+      animation: bg 10s ease infinite;
+      flex-direction: column;
       color: white;
-      cursor: pointer;
-      transition: background 0.3s ease;
+      text-align: center;
     }
-    button:hover {
-      background: #1ebc5c;
+
+    @keyframes bg {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
-    .footer {
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    input {
+      padding: 12px;
+      border-radius: 5px;
+      font-size: 18px;
+      border: none;
+      margin-top: 15px;
+      width: 220px;
+      text-align: center;
+    }
+
+    button {
       margin-top: 20px;
-      font-size: 14px;
-      color: #ccc;
+      padding: 12px 30px;
+      font-size: 18px;
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #ffd700;
+    }
+
+    .upi-id {
+      margin-top: 10px;
+      font-size: 15px;
+      opacity: 0.8;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Send UPI Link via WhatsApp</h2>
-    <input type="number" id="amt" placeholder="Enter amount (₹)" />
-    <button onclick="sendToWhatsApp()">Send on WhatsApp</button>
-    <div class="footer">DeepLink By Deepu</div>
-  </div>
+
+  <h1>Pay NITAL STORE</h1>
+  <div class="upi-id">UPI ID: <strong>6367593465@finobank</strong></div>
+
+  <input type="number" id="amount" placeholder="Enter Amount ₹" min="1"/>
+  <br>
+  <button onclick="payNow()">Pay Now</button>
 
   <script>
-    const upi = "7728012178@ybl"; // Teri UPI ID yahan set hai
-
-    function sendToWhatsApp() {
-      const amt = document.getElementById("amt").value;
-      if (!amt || amt <= 0) {
+    function payNow() {
+      const amount = document.getElementById("amount").value;
+      if (!amount || parseFloat(amount) <= 0) {
         alert("Please enter a valid amount.");
         return;
       }
 
-      const upiLink = `upi://pay?pa=${upi}&am=${amt}&cu=INR&tn=Thanks`;
-      const encoded = encodeURIComponent(upiLink);
-      const waLink = `https://wa.me/?text=${encoded}`;
-      window.open(waLink, "_blank");
+      const upiID = "6367593465@finobank";
+      const name = "NITAL STORE";
+      const note = "Payment";
+
+      const upiUrl = `upi://pay?pa=${upiID}&pn=${encodeURIComponent(name)}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
+
+      // Open UPI URL
+      window.location.href = upiUrl;
     }
   </script>
+
 </body>
 </html>
