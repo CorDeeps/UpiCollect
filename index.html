@@ -3,93 +3,117 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>UPI Payment - NITAL STORE</title>
+  <title>Pay Anushka Somani via UPI</title>
   <style>
     body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #ffdde1, #ee9ca7);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      background: linear-gradient(-45deg, #ff4e50, #fc913a, #f9d423, #eae374);
-      background-size: 400% 400%;
-      animation: bg 10s ease infinite;
-      flex-direction: column;
-      color: white;
-      text-align: center;
-    }
-
-    @keyframes bg {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      margin: 0;
+      padding: 20px;
     }
 
     h1 {
-      font-size: 28px;
+      color: #4d0039;
       margin-bottom: 10px;
     }
 
-    input {
-      padding: 12px;
-      border-radius: 5px;
-      font-size: 18px;
-      border: none;
-      margin-top: 15px;
-      width: 220px;
+    .container {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.15);
       text-align: center;
+      max-width: 400px;
+      width: 100%;
     }
 
-    button {
-      margin-top: 20px;
-      padding: 12px 30px;
-      font-size: 18px;
-      background: #fff;
-      color: #000;
+    input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      margin: 15px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
+      font-size: 16px;
+      color: white;
       cursor: pointer;
-      transition: 0.3s;
+      transition: 0.3s ease;
+      text-decoration: none;
     }
 
-    button:hover {
-      background-color: #ffd700;
+    .phonepe { background-color: #5b2d90; }
+    .gpay    { background-color: #1a73e8; }
+    .paytm   { background-color: #00baf2; }
+
+    .btn:hover {
+      transform: scale(1.03);
+      opacity: 0.9;
     }
 
-    .upi-id {
-      margin-top: 10px;
-      font-size: 15px;
-      opacity: 0.8;
+    footer {
+      margin-top: 20px;
+      color: #555;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
 
-  <h1>Pay NITAL STORE</h1>
-  <div class="upi-id">UPI ID: <strong>6367593465@finobank</strong></div>
+  <div class="container">
+    <h1>Pay Anushka Somani</h1>
+    <p><strong>UPI ID:</strong> 7728012178@ybl</p>
 
-  <input type="number" id="amount" placeholder="Enter Amount ₹" min="1"/>
-  <br>
-  <button onclick="payNow()">Pay Now</button>
+    <input type="number" id="amount" placeholder="Enter amount in ₹" min="1"/>
+
+    <a id="gpayBtn" class="btn gpay" target="_blank">Pay with Google Pay</a>
+    <a id="phonepeBtn" class="btn phonepe" target="_blank">Pay with PhonePe</a>
+    <a id="paytmBtn" class="btn paytm" target="_blank">Pay with Paytm</a>
+
+    <footer>
+      &copy; 2025 Payment Portal for Anushka Somani
+    </footer>
+  </div>
 
   <script>
-    function payNow() {
-      const amount = document.getElementById("amount").value;
-      if (!amount || parseFloat(amount) <= 0) {
+    const upiID = "7728012178@ybl";
+    const name = "Anushka Somani";
+
+    function generateLink(pkg) {
+      const amount = document.getElementById("amount").value.trim();
+      if (!amount || isNaN(amount) || amount <= 0) {
         alert("Please enter a valid amount.");
-        return;
+        return "#";
       }
 
-      const upiID = "6367593465@finobank";
-      const name = "NITAL STORE";
-      const note = "Payment";
-
-      const upiUrl = `upi://pay?pa=${upiID}&pn=${encodeURIComponent(name)}&am=${amount}&tn=${encodeURIComponent(note)}&cu=INR`;
-
-      // Open UPI URL
-      window.location.href = upiUrl;
+      const base = `upi/pay?pa=${upiID}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR&tn=Payment%20to%20${encodeURIComponent(name)}`;
+      return `intent://${base}#Intent;scheme=upi;package=${pkg};end;`;
     }
+
+    document.getElementById("gpayBtn").addEventListener("click", function(e) {
+      this.href = generateLink("com.google.android.apps.nbu.paisa.user");
+    });
+
+    document.getElementById("phonepeBtn").addEventListener("click", function(e) {
+      this.href = generateLink("com.phonepe.app");
+    });
+
+    document.getElementById("paytmBtn").addEventListener("click", function(e) {
+      this.href = generateLink("net.one97.paytm");
+    });
   </script>
 
 </body>
